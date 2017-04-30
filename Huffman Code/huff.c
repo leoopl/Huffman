@@ -124,18 +124,3 @@ int is_leaf(Node *huff)
 {
 	return (huff -> left == NULL && huff -> right == NULL);
 }
-
-int main()
-{
-	Node *queue = create_empty_queue();
-	char A,B,C,D,E,F,G,H,I,J,K,L,M;
-	queue = create_node(queue, 'A', 4);
-	queue = create_node(queue, 'B', 2);
-	queue = create_node(queue, 'C', 7);
-	queue = create_node(queue, 'D', 2);
-	queue = huff_tree(queue);
-	print_tree(queue);
-	printf("\n%d\n", size_huff(queue));
-
-	return 0;
-}

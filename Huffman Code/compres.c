@@ -109,7 +109,7 @@ void compress(char* file_name)
 	int_bina(qtdLixo, lixo, 3);
 	qtdLixo[3] = '\0';//transformando o tamanho da lixo em binario
 
-	//montando o cabeçario e
+	//montando o cabeçario
 	char header[17] = "";
 	strcpy(header, qtdLixo);
 	header[3] = '\0';
@@ -117,7 +117,7 @@ void compress(char* file_name)
 	header[16] = '\0';
 
 	rewind(new_file);
-	escreverBitsArquivo(new_file, header, 16);
+	escreverBitsArquivo(new_file, header, 16);//coloca o header no incio do arquivo
 
 	printf("\nCompactação Finalizada!!");
 	fclose(old_file);

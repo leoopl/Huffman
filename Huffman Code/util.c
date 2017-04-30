@@ -48,15 +48,15 @@ void escreverBitsArquivo(FILE *arquivo, char *bits, int tam)
 {
 	int i;
 	unsigned char byte = 0;
-	int bitpos = 7;
+	int bit_index = 7;
 	for(i = 0 ; i<tam; i++)
 	{
 		if(bits[i] != '0')
-			byte = set_bit(byte, bitpos);
-		bitpos--;
-		if(bitpos < 0)
+			byte = set_bit(byte, bit_index);
+		bit_index--;
+		if(bit_index < 0)
 		{
-			bitpos = 7;
+			bit_index = 7;
 			fprintf(arquivo, "%c", byte);
 			byte = 0;
 		}

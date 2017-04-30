@@ -1,13 +1,21 @@
 #include "util.c"
 #include "HashT.c"
+#include <string.h>
 
 void freq_count(FILE* file, HashT *ht)
 {
-	unsigned int c;
-	while(c = getc(file) != EOF)
+	unsigned char *buffer;
+	fseek(file , 0 , SEEK_END);
+	int file_size = ftell(file);//ler o arquivo e diz o tamanho dele
+	rewind(file);
+	buffer = (unsigned char*) malloc(sizeof(char)*file_size);
+	fread(buffer, 1, file_size, file);
+	int i;
+	for(i=0; i<file_size; i++)
 	{
-		ht -> table[c] -> freq++;
+		ht -> table[buffer[i]] -> freq++;
 	}
+
 }//conta a frequencia e ja manda pra hash
 
 int escape(Node* huff, int escapes)
@@ -42,19 +50,23 @@ int escreverArquivoCompactado(FILE *arquivoCompactar, FILE *arquivoCompactado, H
 {
 	unsigned char byteLido;
 	unsigned char byte = 0;
-	char *bitshuff;
+	char *bitshuff = NULL;
 	int bit_index = 7;
 	int lixo, i;
 	rewind(arquivoCompactar);
+
+
+
 	while(fscanf(arquivoCompactar, "%c", &byteLido) > 0)
 	{
 		bitshuff = getCharBits(ht, byteLido);//retorna o bit que representa esse caracter
+		//printf("%s\n", bitshuff);
 		for(i = 0 ; i < strlen(bitshuff); ++i)
 		{
-			if(bitshuff[i] != '0')
+			if(bitshuff[i] == '1')
 				byte = set_bit(byte, bit_index);
 			bit_index--;
-			if(bit_index < 0)
+			if(bit_index = -1)
 			{
 				bit_index = 7;
 				fprintf(arquivoCompactado, "%c", byte);
@@ -72,19 +84,55 @@ int escreverArquivoCompactado(FILE *arquivoCompactar, FILE *arquivoCompactado, H
 }//RETORNA O TAMANHO DO LIXO
 
 
+
+/*int write_file_codification(FILE *old_file, FILE *new_file, HashT *ht)
+{
+	int bit_index = 7;
+	unsigned char byte = 0;
+	unsigned int aux;
+	char *temp;
+
+	while((aux = getc(old_file)) != EOF)//Começa a partir do primeiro elemento da lista na huff_table na posição do char lido no arquivo
+	{
+		temp = ht->table[aux]->bitstring;
+		while(temp != NULL)
+		{
+			if(bit_index == -1)
+			{
+				fprintf(new_file, "%c", byte);
+				byte = 0;
+				bit_index = 7;
+			}
+			if(temp == '1')
+			{
+				byte = set_bit(byte, bit_index);
+			}
+			bit_index--;
+			//temp = temp->Next;
+		}
+	}
+
+	if(bit_index <= 7)
+		fprintf(new_file, "%c", byte);
+	bit_index++;
+	return bit_index;
+}*///retorna o tamanho do lixo
+
+
+
 void compress(char* file_name)
 {
 	FILE *old_file, *new_file;
 	Node *queue = create_empty_queue();
 	HashT *hasht = create_hash();
 	Node* huffman_tree = create_empty_tree();//---inicialização
+	int i;
 
 	old_file = fopen(file_name, "rb");
 	new_file = fopen("new_file.huff", "wb");
 
 	freq_count(old_file, hasht);
 
-	int i;
 	for(i = 0; i < 256; i++)
 	{
 		if(hasht -> table[i] -> freq > 0)
@@ -92,19 +140,38 @@ void compress(char* file_name)
 	}//Inserindo todos os elementos que aparecem pelo menos uma vez na fila de prioridade
 
 	huffman_tree = huff_tree(queue);//transformando fila em arvore
+
+	//print_tree(huffman_tree);
+
 	fprintf(new_file, "00");//ocupando os dois primeiros bytes para guarda lugar pro lixo e size_tree
-	preench_bit(huffman_tree, hasht);//criando as strings 1 e 0
+
+	unsigned char bit_string[255];
+	build_representations(huffman_tree, bit_string, -1, '0', hasht);
+
+
 	unsigned int tree_size = size_huff(huffman_tree) + escape(huffman_tree, 0);//pegando o tamanho da arvore
 	print_tree_header(new_file, huffman_tree);//tratando os *
 
 	char *tree_header_tam = (char*)malloc(13*sizeof(char));
 	int_bina(tree_header_tam, tree_size, 13);//transformando o tamanho da arvore em binario
 
+
+	//printf("\nbin %s\n", tree_header_tam);
+	//printf("tamanho arvore %d\n", tree_size);
+
+
 	unsigned int lixo = escreverArquivoCompactado(old_file, new_file, hasht);//pegando o tamanho do lixo
+	//unsigned int lixo = write_file_codification(old_file, new_file, hasht);
+
 
 	char *qtdLixo = (char*)malloc(4*sizeof(char));
 	int_bina(qtdLixo, lixo, 3);
 	qtdLixo[3] = '\0';//transformando o tamanho da lixo em binario
+
+
+	//printf("\n%d lixo %s\n", lixo, qtdLixo);
+
+
 
 	//montando o cabeçario
 	char header[17] = "";
@@ -112,7 +179,8 @@ void compress(char* file_name)
 	header[3] = '\0';
 	strcat(header, tree_header_tam);
 	header[16] = '\0';
-	printf("header-> %s\n", header);
+
+	//printf("header-> %s\n", header);
 
 	rewind(new_file);
 	escreverBitsArquivo(new_file, header, 16);//coloca o header no incio do arquivo

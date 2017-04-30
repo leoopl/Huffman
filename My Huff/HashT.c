@@ -1,6 +1,5 @@
 #include <string.h>
 #include "huff.c"
-#include "util.c"
 #define TAM_HASH 256
 
 typedef struct element

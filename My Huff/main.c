@@ -1,5 +1,5 @@
 #include "compres.c"
-//#include "descompress.c"
+//#include "descompres.c"
 
 int main()
 {

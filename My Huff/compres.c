@@ -52,10 +52,8 @@ int escreverArquivoCompactado(FILE *arquivoCompactar, FILE *arquivoCompactado, H
 	unsigned char byte = 0;
 	char *bitshuff = NULL;
 	int bit_index = 7;
-	int lixo, i;
+	int i;
 	rewind(arquivoCompactar);
-
-
 
 	while(fscanf(arquivoCompactar, "%c", &byteLido) > 0)
 	{
@@ -63,60 +61,27 @@ int escreverArquivoCompactado(FILE *arquivoCompactar, FILE *arquivoCompactado, H
 		//printf("%s\n", bitshuff);
 		for(i = 0 ; i < strlen(bitshuff); ++i)
 		{
-			if(bitshuff[i] == '1')
-				byte = set_bit(byte, bit_index);
-			bit_index--;
-			if(bit_index = -1)
-			{
-				bit_index = 7;
-				fprintf(arquivoCompactado, "%c", byte);
-				byte = 0;
-			}
-		}
-	}
-	lixo = bit_index + 1;
-	if(lixo == 8)
-		lixo = 0;
-	else
-		fprintf(arquivoCompactado, "%c", byte);
-
-	return lixo;
-}//RETORNA O TAMANHO DO LIXO
-
-
-
-/*int write_file_codification(FILE *old_file, FILE *new_file, HashT *ht)
-{
-	int bit_index = 7;
-	unsigned char byte = 0;
-	unsigned int aux;
-	char *temp;
-
-	while((aux = getc(old_file)) != EOF)//Começa a partir do primeiro elemento da lista na huff_table na posição do char lido no arquivo
-	{
-		temp = ht->table[aux]->bitstring;
-		while(temp != NULL)
-		{
 			if(bit_index == -1)
 			{
-				fprintf(new_file, "%c", byte);
+				fprintf(arquivoCompactado, "%c", byte);
 				byte = 0;
 				bit_index = 7;
 			}
-			if(temp == '1')
+			if(bitshuff[i] == '1')
 			{
 				byte = set_bit(byte, bit_index);
 			}
 			bit_index--;
-			//temp = temp->Next;
 		}
 	}
-
 	if(bit_index <= 7)
-		fprintf(new_file, "%c", byte);
+	{
+		fprintf(arquivoCompactado, "%c", byte);
+	}
 	bit_index++;
+
 	return bit_index;
-}*///retorna o tamanho do lixo
+}//RETORNA O TAMANHO DO LIXO
 
 
 
@@ -141,6 +106,7 @@ void compress(char* file_name)
 
 	huffman_tree = huff_tree(queue);//transformando fila em arvore
 
+	//preinta a arvore em pre orden
 	//print_tree(huffman_tree);
 
 	fprintf(new_file, "00");//ocupando os dois primeiros bytes para guarda lugar pro lixo e size_tree
@@ -156,6 +122,7 @@ void compress(char* file_name)
 	int_bina(tree_header_tam, tree_size, 13);//transformando o tamanho da arvore em binario
 
 
+	//printa o binario da arvore
 	//printf("\nbin %s\n", tree_header_tam);
 	//printf("tamanho arvore %d\n", tree_size);
 
@@ -169,6 +136,7 @@ void compress(char* file_name)
 	qtdLixo[3] = '\0';//transformando o tamanho da lixo em binario
 
 
+	//printa tamnhao do lixo, o binario do lixo
 	//printf("\n%d lixo %s\n", lixo, qtdLixo);
 
 
@@ -180,6 +148,7 @@ void compress(char* file_name)
 	strcat(header, tree_header_tam);
 	header[16] = '\0';
 
+	//printa o cabeçario
 	//printf("header-> %s\n", header);
 
 	rewind(new_file);

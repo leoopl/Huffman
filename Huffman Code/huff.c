@@ -2,16 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct node Node;
-
-struct node
+typedef struct node
 {
-	unsigned char letter;
-	int freq;
-	Node *next;
-	Node *left;
-	Node *right;
-};
+	unsigned char letter;//caracter
+	int freq;//frequencia do caracter
+	struct node *next;//proxima da fila
+	struct node *left;//filho esquuerdo
+	struct node *right;//filho direito
+}Node;
 
 Node* create_empty_queue()
 {

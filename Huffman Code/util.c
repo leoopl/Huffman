@@ -37,7 +37,7 @@ int bina_int(char *bin, int tam)
 	while(tam>0)
 	{
 		if(*bin == '1')
-			valor += pow(2,(tam-1));
+			valor += pow(2,(tam-1));//retorna o valor do expoente, no caso 2^tam-1
 		tam--;
 		bin = bin+1;
 	}

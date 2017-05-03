@@ -1,3 +1,5 @@
+#include "huff.c"
+
 //cria uma fila nula
 Node* create_empty_queue();
 

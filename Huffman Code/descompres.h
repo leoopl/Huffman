@@ -1,3 +1,4 @@
+#include "descompres.c"
 //cria um novo nó para a nova arvore
 Node* new_node(char value, Node* left, Node* right);
 

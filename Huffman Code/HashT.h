@@ -1,3 +1,5 @@
+#include "HashT.c"
+
 //cria uma nova hash
 HashT *create_hash();
 

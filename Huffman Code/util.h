@@ -1,3 +1,5 @@
+#include "util.c"
+
 /*A função set_bit recebe um char que representará,
  * o byte que queremos alterar, e um inteiro i, que
  * representa qual bit queremos setar. A função retorna

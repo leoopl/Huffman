@@ -1,5 +1,5 @@
-#include "util.c"
-#include "HashT.c"
+#include "util.h"
+#include "HashT.h"
 #include <string.h>
 
 void freq_count(FILE* file, HashT *ht)

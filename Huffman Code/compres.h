@@ -1,3 +1,5 @@
+#include "compres.c"
+
 /*Recebe o arquivo e uma Hash
 * função que conta a frequencia de caracter
 * e ja adiciona na hash utilizada
